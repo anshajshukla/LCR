@@ -9,10 +9,7 @@ class Solution {
             c+=h.getOrDefault(p-k,0);
             h.put(p,h.getOrDefault(p,0)+1);            
         }
+        System.gc();
         return c;
-
-
-
-        
     }
 }
