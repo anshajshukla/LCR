@@ -13,6 +13,7 @@ class Solution {
             }
 
         }
+        System.gc();
         return (min==(int)1e9) ? 0:min;
 
 
