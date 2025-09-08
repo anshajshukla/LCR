@@ -1,43 +1,46 @@
 class Solution {
-    public int networkDelayTime(int[][] times, int n, int k) {
-        // Create a graph represented as an adjacency list 
-        Map<Integer, List<int[]>> graph = new HashMap<>();
-        for(int []edge : times){
-            graph.computeIfAbsent(edge[0],x -> new ArrayList<>()).add(new int[]{edge[1],edge[2]});
+    class Pair{
+        int node;
+        int dis;
+        Pair(int node,int dis){
+            this.node= node;
+            this.dis= dis;
         }
+    }
+    public int networkDelayTime(int[][] times, int n, int k) {
+        List<List<Pair>> adj = new ArrayList<>();
+        for(int i=0;i<=n;i++) adj.add(new ArrayList<Pair>());
+        for(int e[] : times){
+            adj.get(e[0]).add(new Pair(e[1],e[2]));
+        }
+        int[] dist = new int[n+1];
+        Arrays.fill(dist,Integer.MAX_VALUE);
+        dist[k]=0;
 
-        // Use priority queue to select the node with the minimum distance 
-        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
-        pq.offer(new int[]{k,0}); // Start from node k from distance 0
-
-        // Initialises distance array with -inf 
-        int [] distances = new int[n+1];
-        Arrays.fill(distances,Integer.MAX_VALUE);
-        distances[k]=0;
-
+        PriorityQueue<Pair> pq = new PriorityQueue<>((a,b)-> a.dis - b.dis);
+        pq.add(new Pair(k,0));
+        
         while(!pq.isEmpty()){
-            int [] current = pq.poll();
-            int currentNode = current[0];
-            int currentDist = current[1];
+            Pair curr = pq.poll();
+            int u = curr.node;
+            int d = curr.dis;
 
-            // if we have already found a shorter path before continue
-            if(currentDist > distances[currentNode]) continue;
+            // important removes outdated entries 
+            if(d>dist[u]) continue;
 
-            // update the distance of neighbouring nodes 
-            if(graph.containsKey(currentNode)){
-                for(int [] neighbour : graph.get(currentNode)){
-                    int nextNode = neighbour[0];
-                    int nextDist = currentDist+neighbour[1];
-                    if(nextDist < distances[nextNode]){
-                        distances[nextNode] = nextDist;
-                        pq.offer(new int[]{nextNode,nextDist});
-                    }
-                }
+            for(Pair p : adj.get(u)){
+                int v = p.node;
+                int w = p.dis;
+
+                
+                if(dist[u]+w<dist[v]){
+                    dist[v]=dist[u]+w;
+                    pq.offer(new Pair(v,dist[v]));
+                }        
             }
         }
-        int maxDist = Arrays.stream(distances).skip(1).max().getAsInt();
-        return maxDist == Integer.MAX_VALUE ? -1 : maxDist;
-
-        
+        int ans = 0;
+        for(int i = 1;i<=n;i++) ans = Math.max(ans,dist[i]);
+        return (ans==Integer.MAX_VALUE) ? -1:ans;        
     }
 }
