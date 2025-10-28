@@ -28,9 +28,10 @@ class Solution {
                 color[i] = 1;
                 dfs(i, color, adj);
             }
+            if (!isValid) return false;
         }
         
-        return isValid;
+        return true;
         
          
 
