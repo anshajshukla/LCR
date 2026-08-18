@@ -10,7 +10,6 @@ class Solution {
             p[i+1]= nums[i]+p[i];
             int r = ((p[i+1]%k)+k)%k;
             if(h.containsKey(r)) ans+=h.getOrDefault(r,0);
-            System.out.println("rem" + r);
             h.put(r,h.getOrDefault(r,0)+1);
 
         }
